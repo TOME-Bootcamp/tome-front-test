@@ -1,0 +1,24 @@
+services:
+  #  TODO descomentar cuando se comience a publicar la imagen docker de backend, de momento probar con backend en localhost
+  #  backend:
+  #    image: tu-registry/backend:dev #reemplazar por registry, nombre y tag correctos
+  #    environment:
+  #      SPRING_PROFILES_ACTIVE: dev
+  #    networks: [app_net]
+  #    ports: ["8080:8080"]
+
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      API_BASE_URL: http://localhost:8080 #TODO Reemplazar por http://backend:8080 cuando se descomente el servicio backend
+      PORT: 3000
+    #    depends_on: [backend] TODO descomentar junto a lo anterior
+    networks: [app_net]
+    ports: ['3000:3000']
+
+networks:
+  app_net:
+    driver: bridge

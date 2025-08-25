@@ -1,176 +1,340 @@
 @import 'tailwindcss';
 
-@theme inline {
-  /* --- COLORES --- */
-  --color-primary-100: rgba(222, 226, 237, 1);
-  --color-primary-200: rgba(190, 198, 218, 1);
-  --color-primary-300: rgba(137, 152, 189, 1);
-  --color-primary-400: rgba(108, 127, 173, 1);
-  --color-primary-500: rgba(75, 92, 134, 1);
-  --color-primary-600: rgba(57, 70, 102, 1);
-  --color-primary-700: rgba(37, 45, 65, 1);
-  --color-primary-800: rgba(20, 25, 36, 1);
+@custom-variant dark (&:is(.dark *));
 
-  --color-neutral-100: rgba(235, 230, 224, 1);
-  --color-neutral-200: rgba(216, 206, 192, 1);
-  --color-neutral-300: rgba(184, 166, 142, 1);
-  --color-neutral-400: rgba(165, 138, 114, 1);
-  --color-neutral-500: rgba(130, 98, 78, 1);
-  --color-neutral-600: rgba(119, 73, 40, 1);
-  --color-neutral-700: rgba(83, 39, 19, 1);
-  --color-neutral-800: rgba(45, 21, 10, 1);
-  --color-neutral-shadow-500: rgba(45, 21, 10, 0.2);
-  --color-neutral-shadow-800: rgba(45, 21, 10, 0.6);
+@source './**/*.{js,ts,jsx,tsx}';
+@source '../components/**/*.{js,ts,jsx,tsx}';
+@source '../lib/**/*.{js,ts,jsx,tsx}';
 
-  --color-success-100: rgba(224, 235, 226, 1);
-  --color-success-200: rgba(194, 214, 197, 1);
-  --color-success-300: rgba(145, 182, 151, 1);
-  --color-success-400: rgba(117, 163, 125, 1);
-  --color-success-500: rgba(83, 126, 91, 1);
-  --color-success-600: rgba(63, 95, 69, 1);
-  --color-success-700: rgba(44, 60, 42, 1);
-  --color-success-800: rgba(24, 33, 23, 1);
+/* 1) Design System (DS) base: definir tokens en :root (prefijo --ds-*) */
+:root {
+  /* Radios base */
+  --radius: 0.625rem;
 
-  --color-warning-100: rgba(248, 235, 211, 1);
-  --color-warning-200: rgba(240, 216, 168, 1);
-  --color-warning-300: rgba(229, 184, 98, 1);
-  --color-warning-400: rgba(222, 167, 58, 1);
-  --color-warning-500: rgba(179, 129, 30, 1);
-  --color-warning-600: rgba(136, 97, 23, 1);
-  --color-warning-700: rgba(78, 58, 24, 1);
-  --color-warning-800: rgba(43, 32, 13, 1);
+  /* Paleta DS (claro) */
+  --ds-primary-100: rgba(222, 226, 237, 1);
+  --ds-primary-200: rgba(190, 198, 218, 1);
+  --ds-primary-300: rgba(137, 152, 189, 1);
+  --ds-primary-400: rgba(108, 127, 173, 1);
+  --ds-primary-500: rgba(75, 92, 134, 1);
+  --ds-primary-600: rgba(57, 70, 102, 1);
+  --ds-primary-700: rgba(37, 45, 65, 1);
+  --ds-primary-800: rgba(20, 25, 36, 1);
 
-  --color-error-100: rgba(244, 215, 216, 1);
-  --color-error-200: rgba(232, 176, 177, 1);
-  --color-error-300: rgba(214, 112, 114, 1);
-  --color-error-400: rgba(204, 76, 78, 1);
-  --color-error-500: rgba(163, 46, 48, 1);
-  --color-error-600: rgba(123, 35, 36, 1);
-  --color-error-700: rgba(100, 4, 2, 1);
-  --color-error-800: rgba(55, 2, 1, 1);
-  --color-error-shadow-800: rgba(55, 2, 1, 0.6);
+  --ds-neutral-100: rgba(235, 230, 224, 1);
+  --ds-neutral-200: rgba(216, 206, 192, 1);
+  --ds-neutral-300: rgba(184, 166, 142, 1);
+  --ds-neutral-400: rgba(165, 138, 114, 1);
+  --ds-neutral-500: rgba(130, 98, 78, 1);
+  --ds-neutral-600: rgba(119, 73, 40, 1);
+  --ds-neutral-700: rgba(83, 39, 19, 1);
+  --ds-neutral-800: rgba(45, 21, 10, 1);
+  --ds-neutral-shadow-500: rgba(45, 21, 10, 0.2);
+  --ds-neutral-shadow-800: rgba(45, 21, 10, 0.6);
 
-  /* --- FUENTES --- */
-  --font-sans: 'Roboto', Helvetica, sans-serif;
+  --ds-success-100: rgba(224, 235, 226, 1);
+  --ds-success-200: rgba(194, 214, 197, 1);
+  --ds-success-300: rgba(145, 182, 151, 1);
+  --ds-success-400: rgba(117, 163, 125, 1);
+  --ds-success-500: rgba(83, 126, 91, 1);
+  --ds-success-600: rgba(63, 95, 69, 1);
+  --ds-success-700: rgba(44, 60, 42, 1);
+  --ds-success-800: rgba(24, 33, 23, 1);
 
-  /* --- ESPACIADOS Y TAMAÑOS --- */
-  --spacing-xs: 4px;
-  --spacing-s: 8px;
-  --spacing-m: 16px;
-  --spacing-l: 24px;
-  --spacing-xl: 32px;
-  --spacing-xxl: 40px;
-  --spacing-xxxl: 48px;
-  --spacing-book-sm: 125px;
-  --spacing-book-md: 175px;
-  --spacing-book-lg: 225px;
+  --ds-warning-100: rgba(248, 235, 211, 1);
+  --ds-warning-200: rgba(240, 216, 168, 1);
+  --ds-warning-300: rgba(229, 184, 98, 1);
+  --ds-warning-400: rgba(222, 167, 58, 1);
+  --ds-warning-500: rgba(179, 129, 30, 1);
+  --ds-warning-600: rgba(136, 97, 23, 1);
+  --ds-warning-700: rgba(78, 58, 24, 1);
+  --ds-warning-800: rgba(43, 32, 13, 1);
 
-  /* --- SOMBRAS --- */
-  --shadow-default: 0px 4px 4px 0px rgba(45, 21, 10, 0.2);
+  --ds-error-100: rgba(244, 215, 216, 1);
+  --ds-error-200: rgba(232, 176, 177, 1);
+  --ds-error-300: rgba(214, 112, 114, 1);
+  --ds-error-400: rgba(204, 76, 78, 1);
+  --ds-error-500: rgba(163, 46, 48, 1);
+  --ds-error-600: rgba(123, 35, 36, 1);
+  --ds-error-700: rgba(100, 4, 2, 1);
+  --ds-error-800: rgba(55, 2, 1, 1);
+
+  /* Tipografías DS */
+  --font-sans: 'Roboto', Helvetica, Arial, sans-serif;
+
+  /* 2) Variables semánticas (shadcn) basadas en DS */
+  --background: var(--ds-neutral-100);
+  --foreground: var(--ds-neutral-800);
+
+  --card: var(--ds-neutral-100);
+  --card-foreground: var(--ds-neutral-800);
+
+  --popover: var(--ds-neutral-100);
+  --popover-foreground: var(--ds-neutral-800);
+
+  --primary: var(--ds-primary-500);
+  --primary-foreground: var(--ds-primary-100);
+
+  --secondary: var(--ds-neutral-200);
+  --secondary-foreground: var(--ds-neutral-800);
+
+  --muted: var(--ds-neutral-200);
+  --muted-foreground: var(--ds-neutral-400);
+
+  --accent: var(--ds-neutral-200);
+  --accent-foreground: var(--ds-neutral-800);
+
+  --destructive: var(--ds-error-500);
+  --destructive-foreground: var(--ds-error-100);
+
+  --border: var(--ds-neutral-700);
+  --input: var(--ds-neutral-400);
+  --ring: var(--ds-primary-400);
+
+  /* Charts y sidebar (opcionales) */
+  --chart-1: var(--ds-primary-500);
+  --chart-2: var(--ds-success-500);
+  --chart-3: var(--ds-warning-500);
+  --chart-4: var(--ds-primary-300);
+  --chart-5: var(--ds-error-500);
+
+  --sidebar: var(--ds-neutral-100);
+  --sidebar-foreground: var(--ds-neutral-800);
+  --sidebar-primary: var(--ds-primary-500);
+  --sidebar-primary-foreground: var(--ds-primary-100);
+  --sidebar-accent: var(--ds-neutral-200);
+  --sidebar-accent-foreground: var(--ds-neutral-800);
+  --sidebar-border: var(--ds-neutral-300);
+  --sidebar-ring: var(--ds-primary-400);
+
+  /* Spacing DS */
+  --ds-spacing-xs: 4px;
+  --ds-spacing-s: 8px;
+  --ds-spacing-m: 16px;
+  --ds-spacing-l: 24px;
+  --ds-spacing-xl: 32px;
+  --ds-spacing-xxl: 40px;
+  --ds-spacing-xxxl: 48px;
+  --ds-spacing-book-sm: 125px;
+  --ds-spacing-book-md: 175px;
+  --ds-spacing-book-lg: 225px;
 }
 
-@layer components {
-  .all-\[unset\] {
-    all: unset;
+/* 3) Tema oscuro (no aplica de momento a la app)*/
+.dark {
+  --background: var(--ds-neutral-800);
+  --foreground: var(--ds-neutral-100);
+  --card: var(--ds-neutral-800);
+  --card-foreground: var(--ds-neutral-100);
+  --popover: var(--ds-neutral-800);
+  --popover-foreground: var(--ds-neutral-100);
+  --primary: var(--ds-primary-300);
+  --primary-foreground: var(--ds-neutral-800);
+  --secondary: var(--ds-neutral-700);
+  --secondary-foreground: var(--ds-neutral-100);
+  --muted: var(--ds-neutral-700);
+  --muted-foreground: var(--ds-neutral-300);
+  --accent: var(--ds-neutral-700);
+  --accent-foreground: var(--ds-neutral-100);
+  --destructive: var(--ds-error-400);
+  --destructive-foreground: var(--ds-neutral-100);
+  --border: var(--ds-neutral-600);
+  --input: var(--ds-neutral-600);
+  --ring: var(--ds-primary-300);
+}
+
+/* 4) Exponer tokens Tailwind v4 a partir de semánticos (shadcn) */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Tipografías */
+  --font-sans: var(--font-sans);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --spacing-xs: var(--ds-spacing-xs);
+  --spacing-s: var(--ds-spacing-s);
+  --spacing-m: var(--ds-spacing-m);
+  --spacing-l: var(--ds-spacing-l);
+  --spacing-xl: var(--ds-spacing-xl);
+  --spacing-xxl: var(--ds-spacing-xxl);
+  --spacing-xxxl: var(--ds-spacing-xxxl);
+  --spacing-book-sm: var(--ds-spacing-book-sm);
+  --spacing-book-md: var(--ds-spacing-book-md);
+  --spacing-book-lg: var(--ds-spacing-book-lg);
+}
+
+/* 5) Base Tailwind + shadcn */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
   }
 
-  /* --- UTILIDADES DE TIPOGRAFÍA COMPUESTAS --- */
-  .text-display-large {
+  /* Ocultar controles nativos del input search (evitar la X por defecto) */
+  input[type='search']::-webkit-search-cancel-button,
+  input[type='search']::-webkit-search-decoration,
+  input[type='search']::-webkit-search-results-button,
+  input[type='search']::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+  }
+  input[type='search']::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* Utilidades tipográficas equivalentes en capa utilities para override fiable sobre shadcn */
+@layer utilities {
+  .u-text-display-large {
     font-size: 57px;
     line-height: 64px;
     font-weight: 400;
     letter-spacing: -0.25px;
   }
-  .text-display-medium {
+  .u-text-display-medium {
     font-size: 45px;
     line-height: 52px;
     font-weight: 400;
     letter-spacing: 0px;
   }
-  .text-display-small {
+  .u-text-display-small {
     font-size: 36px;
     line-height: 44px;
     font-weight: 400;
     letter-spacing: 0px;
   }
 
-  .text-headline-large {
+  .u-text-headline-large {
     font-size: 32px;
     line-height: 40px;
     font-weight: 400;
     letter-spacing: 0px;
   }
-  .text-headline-medium {
+  .u-text-headline-medium {
     font-size: 28px;
     line-height: 36px;
     font-weight: 400;
     letter-spacing: 0px;
   }
-  .text-headline-small {
+  .u-text-headline-small {
     font-size: 24px;
     line-height: 32px;
     font-weight: 400;
     letter-spacing: 0px;
   }
 
-  .text-title-large {
+  .u-text-title-large {
     font-size: 22px;
     line-height: 28px;
     font-weight: 400;
     letter-spacing: 0px;
   }
-  .text-title-medium {
+  .u-text-title-medium {
     font-size: 16px;
     line-height: 24px;
     font-weight: 500;
-    letter-spacing: 0.15000000596046448px;
+    letter-spacing: 0.15px;
   }
-  .text-title-small {
+  .u-text-title-small {
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
-    letter-spacing: 0.10000000149011612px;
+    letter-spacing: 0.1px;
   }
 
-  .text-body-large {
+  .u-text-body-large {
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
     letter-spacing: 0.5px;
   }
-  .text-body-medium {
+  .u-text-body-medium {
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
     letter-spacing: 0.25px;
   }
-  .text-body-small {
+  .u-text-body-small {
     font-size: 12px;
     line-height: 16px;
     font-weight: 400;
     letter-spacing: 0px;
   }
 
-  .text-label-large {
+  .u-text-label-large {
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
-    letter-spacing: 0.10000000149011612px;
+    letter-spacing: 0.1px;
   }
-  .text-label-medium {
+  .u-text-label-medium {
     font-size: 12px;
     line-height: 16px;
     font-weight: 500;
     letter-spacing: 0.5px;
   }
-  .text-label-small {
+  .u-text-label-small {
     font-size: 11px;
     line-height: 16px;
     font-weight: 500;
     letter-spacing: 0.5px;
   }
-}
 
-body {
-  font-family: theme(fontFamily.sans), sans-serif;
+  /* Grid para portadas: columnas de ancho fijo igual a la portada del libro que auto-envuelven sin estirarse */
+  .grid-covers {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--spacing-book-md), var(--spacing-book-md))
+    );
+    justify-content: start;
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }
