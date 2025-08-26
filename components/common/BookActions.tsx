@@ -11,6 +11,13 @@ import { toast } from 'sonner';
 
 export type BookActionState = 'default' | 'in-library' | 'reading' | 'read' | 'dnf';
 
+// Tipos estrictos para la request
+export type BookProgressRequest =
+  | { state: 'in-library' }
+  | { state: 'reading'; progress: number; progressType: 'percent' }
+  | { state: 'read'; startDate: string; endDate: string }
+  | { state: 'dnf'; startDate: string };
+
 interface BookActionsProps {
   bookId: string;
   state?: BookActionState;
@@ -21,71 +28,60 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [showProgressPopover, setShowProgressPopover] = useState(false);
-  const [showDatePopover, setShowDatePopover] = useState(false);
+  const [showReadingPopover, setShowReadingPopover] = useState(false);
+  const [showReadPopover, setShowReadPopover] = useState(false);
+  const [showDnfPopover, setShowDnfPopover] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Estado mockeado de seguimiento
   const [trackingState, setTrackingState] = useState<BookActionState>(state);
-
-  // Nuevos estados para fechas
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
 
-  // Simulación de guardado de estado de seguimiento
-  function saveTrackingState(newState: BookActionState) {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-    setTrackingState(newState);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setSuccess(true);
-      setLoading(false);
-      toast.success('Estado de seguimiento guardado', { position: 'top-right' });
-      timeoutRef.current = setTimeout(() => setSuccess(false), 1500);
-    }, 500);
-  }
-
-  // Guardar estado y datos adicionales según tipo de seguimiento
-  function handleSaveTrackingWithData(
+  async function saveTracking(
     newState: BookActionState,
-    data: { progress?: number; startDate?: string; endDate?: string },
+    data?: { progress?: number; startDate?: string; endDate?: string },
   ) {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    setTrackingState(newState);
-    // Simulación de guardado (mock)
-    // Aquí se puede reemplazar por fetch a /api/book/${bookId}/progress
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
-      toast.success('Seguimiento guardado', { position: 'top-right' });
-    }, 500);
-    // Si hay error, usar: toast.error('Error al guardar', ...)
-  }
-
-  async function saveProgress() {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
+    let body: BookProgressRequest;
+    if (newState === 'reading') {
+      body = {
+        state: 'reading',
+        progress: data?.progress ?? progress,
+        progressType: 'percent',
+      };
+    } else if (newState === 'read') {
+      body = {
+        state: 'read',
+        startDate: data?.startDate ?? startDate,
+        endDate: data?.endDate ?? endDate,
+      };
+    } else if (newState === 'dnf') {
+      body = {
+        state: 'dnf',
+        startDate: data?.startDate ?? startDate,
+      };
+    } else {
+      body = { state: 'in-library' };
+    }
     try {
       const res = await fetch(`/api/book/${bookId}/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ progress }),
+        body: JSON.stringify(body),
       });
+      const result = await res.json();
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || 'Error al guardar');
-        toast.error(data.error || 'Error al guardar', { position: 'top-right' });
-      } else {
-        setSuccess(true);
-        toast.success('Avance guardado', { position: 'top-right' });
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => setSuccess(false), 2000);
+        setError(result.error || 'Error al guardar');
+        toast.error(result.error || 'Error al guardar', { position: 'top-right' });
+        return;
       }
+      setTrackingState(newState);
+      setSuccess(true);
+      toast.success('Seguimiento guardado', { position: 'top-right' });
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => setSuccess(false), 1500);
     } catch {
       setError('Error de red');
       toast.error('Error de red', { position: 'top-right' });
@@ -94,21 +90,6 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
     }
   }
 
-  // Simulación de guardado de fechas
-  function saveDates() {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setSuccess(true);
-      setLoading(false);
-      toast.success('Fechas guardadas', { position: 'top-right' });
-      timeoutRef.current = setTimeout(() => setSuccess(false), 1500);
-    }, 500);
-  }
-
-  // Render según estado
   return (
     <div className="flex items-center gap-[var(--spacing-m)]">
       {/* Botón Quiero leer */}
@@ -116,27 +97,28 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
         variant={trackingState === 'in-library' ? 'seguimientoSelected' : 'seguimientoSecondary'}
         size="lg"
         aria-label="Quiero leer"
-        className=""
-        onClick={() => saveTrackingState('in-library')}
+        onClick={() => {
+          setShowReadingPopover(false);
+          setShowReadPopover(false);
+          setShowDnfPopover(false);
+          saveTracking('in-library');
+        }}
         data-selected={trackingState === 'in-library'}
       >
         <ListIcon className="mr-2 h-4 w-4" />
         Quiero leer
       </Button>
       {/* Botón Leyendo con Popover de avance */}
-      <Popover
-        open={trackingState === 'reading' && showProgressPopover}
-        onOpenChange={setShowProgressPopover}
-      >
+      <Popover open={showReadingPopover} onOpenChange={setShowReadingPopover}>
         <PopoverTrigger asChild>
           <Button
             variant={trackingState === 'reading' ? 'seguimientoSelected' : 'seguimientoSecondary'}
             size="lg"
             aria-label="Leyendo"
-            className=""
             onClick={() => {
-              setTrackingState('reading');
-              setShowProgressPopover(true);
+              setShowReadPopover(false);
+              setShowDnfPopover(false);
+              setShowReadingPopover(true);
             }}
             data-selected={trackingState === 'reading'}
           >
@@ -160,7 +142,10 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
             variant="default"
             size="lg"
             className="mt-2 w-full"
-            onClick={() => handleSaveTrackingWithData('reading', { progress })}
+            onClick={() => {
+              saveTracking('reading', { progress });
+              setShowReadingPopover(false);
+            }}
             disabled={loading}
             aria-label="Guardar avance"
           >
@@ -169,16 +154,16 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
         </PopoverContent>
       </Popover>
       {/* Botón Leído con Popover de fechas */}
-      <Popover open={trackingState === 'read' && showDatePopover} onOpenChange={setShowDatePopover}>
+      <Popover open={showReadPopover} onOpenChange={setShowReadPopover}>
         <PopoverTrigger asChild>
           <Button
             variant={trackingState === 'read' ? 'seguimientoSelected' : 'seguimientoSecondary'}
             size="lg"
             aria-label="Leído"
-            className=""
             onClick={() => {
-              setTrackingState('read');
-              setShowDatePopover(true);
+              setShowReadingPopover(false);
+              setShowDnfPopover(false);
+              setShowReadPopover(true);
             }}
             data-selected={trackingState === 'read'}
           >
@@ -216,7 +201,10 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
             variant="default"
             size="lg"
             className="mt-2 w-full"
-            onClick={() => handleSaveTrackingWithData('read', { startDate, endDate })}
+            onClick={() => {
+              saveTracking('read', { startDate, endDate });
+              setShowReadPopover(false);
+            }}
             disabled={loading}
             aria-label="Guardar fechas"
           >
@@ -225,16 +213,16 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
         </PopoverContent>
       </Popover>
       {/* Botón Abandonado con Popover de fecha de inicio */}
-      <Popover open={trackingState === 'dnf' && showDatePopover} onOpenChange={setShowDatePopover}>
+      <Popover open={showDnfPopover} onOpenChange={setShowDnfPopover}>
         <PopoverTrigger asChild>
           <Button
             variant={trackingState === 'dnf' ? 'seguimientoSelected' : 'seguimientoSecondary'}
             size="lg"
             aria-label="Abandonado"
-            className=""
             onClick={() => {
-              setTrackingState('dnf');
-              setShowDatePopover(true);
+              setShowReadingPopover(false);
+              setShowReadPopover(false);
+              setShowDnfPopover(true);
             }}
             data-selected={trackingState === 'dnf'}
           >
@@ -256,7 +244,10 @@ export function BookActions({ bookId, state = 'default' }: BookActionsProps) {
             variant="default"
             size="lg"
             className="mt-2 w-full"
-            onClick={() => handleSaveTrackingWithData('dnf', { startDate })}
+            onClick={() => {
+              saveTracking('dnf', { startDate });
+              setShowDnfPopover(false);
+            }}
             disabled={loading}
             aria-label="Guardar fecha"
           >

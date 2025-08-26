@@ -207,6 +207,17 @@ const mockBooksData: BookDetail[] = [
   },
 ];
 
+// Estado de seguimiento mockeado por libro
+interface BookProgress {
+  state: 'in-library' | 'reading' | 'read' | 'dnf';
+  progress?: number;
+  progressType?: 'percent' | 'pages';
+  startDate?: string;
+  endDate?: string;
+}
+
+const mockBookProgress: Record<string, BookProgress> = {};
+
 // Función para simular una llamada al backend
 export async function getBookById(id: string): Promise<BookDetail | null> {
   // Simular delay de red
@@ -237,4 +248,13 @@ export async function getRelatedBooks(currentBookId: string): Promise<BookDetail
   const otherBooks = mockBooksData.filter((book) => book.id !== currentBookId);
   const shuffled = otherBooks.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, 3);
+}
+
+export async function updateBookProgress(id: string, data: BookProgress): Promise<void> {
+  // Simula guardado en memoria
+  mockBookProgress[id] = { ...data };
+}
+
+export async function getBookProgress(id: string): Promise<BookProgress | null> {
+  return mockBookProgress[id] ?? null;
 }

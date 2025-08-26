@@ -51,12 +51,6 @@ Auth0
 - Manejar sesiones en Server Components o BFF; no exponer secretos ni usar localStorage para tokens.
 - Usar helpers/SDK compatibles con App Router.
 
-Playwright (E2E)
-
-- Tests deterministas basados en roles/labels accesibles; evitar dependencias de tiempo real.
-- Ubicar specs en tests/e2e (o la carpeta definida por el repo); integrar en CI.
-- Sugerir fixtures reutilizables y escenarios basados en criterios de aceptación.
-
 Calidad, PRs y CI
 
 - ESLint + Prettier: formatear y lint antes de cada commit/merge.
@@ -69,9 +63,8 @@ Comandos (usar pnpm siempre)
 - Instalar dependencias: pnpm install
 - Agregar dependencia: pnpm add <paquete>
 - Agregar dependencia de dev: pnpm add -D <paquete>
-- Ejecutar scripts: pnpm [script]
+- Ejecutar scripts: pnpm <script>
 - shadcn: pnpm dlx shadcn@latest add <componente>
-- Playwright (si no está instalado): pnpm dlx playwright@latest install
 
 Patrones de generación
 
@@ -95,7 +88,6 @@ Checklist por cambio
 
 Integraciones MCP
 
-- Figma: referenciar tokens por nombre; no insertar valores literales de Figma; mapear solo semánticas (—ds-\* y variables shadcn).
+- Figma: referenciar tokens por nombre; no insertar valores literales de Figma; mapear solo semánticas (--ds-\* y variables shadcn).
 - Linear: incluir referencia al issue en ramas/PRs; redactar descripciones con alcance y criterios de aceptación.
 - GitHub: plantillas de PR con checklist de tokens, accesibilidad y pruebas; commits atómicos, claros.
-- Playwright: generar escenarios desde criterios de aceptación; reusar fixtures.
