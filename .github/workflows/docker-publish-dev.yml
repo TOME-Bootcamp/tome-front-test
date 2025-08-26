@@ -5,7 +5,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -26,7 +25,9 @@ jobs:
       - name: Set image tags
         id: meta
         run: |
+          REPO=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
           SHA=${GITHUB_SHA::7}
+          echo "IMAGE_NAME=${REPO}" >> $GITHUB_OUTPUT
           echo "TAG=dev-latest" >> $GITHUB_OUTPUT
           echo "SHA_TAG=dev-${SHA}" >> $GITHUB_OUTPUT
 
@@ -34,9 +35,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
-          push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.TAG }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.SHA_TAG }}
-          # build-args: | si se definen ARG en Dockerfile (no lo necesitamos por ahora)
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.IMAGE_NAME }}:${{ steps.meta.outputs.TAG }}
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.IMAGE_NAME }}:${{ steps.meta.outputs.SHA_TAG }}
