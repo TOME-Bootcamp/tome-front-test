@@ -15,7 +15,7 @@ const compat = new FlatCompat({
 const lintConfig = [
   // Ignorar carpetas de build y deps
   {
-    ignores: ['node_modules/', '.next/', 'dist/', 'coverage/'],
+    ignores: ['node_modules/', '.next/', 'dist/', 'coverage/', 'next-env.d.ts'],
   },
 
   // Presets oficiales de Next (incluye core-web-vitals y TS)
