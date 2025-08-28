@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollRow } from './ScrollRow';
+import type { Tag } from '@/lib/types/books';
 
 export interface ChipsRowProps {
-  labels: string[];
+  labels: Tag[];
   variant?: 'default' | 'secondary' | 'destructive' | 'outline' | null | undefined;
   className?: string;
 }
@@ -21,7 +22,7 @@ export function ChipsRow({ labels, variant, className }: ChipsRowProps) {
           role="listitem"
           className="u-text-title-medium shrink-0 rounded-[var(--radius-xl)] border-2"
         >
-          {label}
+          {label.name}
         </Badge>
       ))}
     </ScrollRow>

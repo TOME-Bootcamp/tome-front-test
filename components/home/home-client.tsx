@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SearchBar } from '@/components/home/search-bar';
 import { BookCover } from '@/components/home/book-cover';
@@ -8,21 +8,28 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@auth0/nextjs-auth0';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-
-interface Book {
-  id: string;
-  title: string;
-  cover: string;
-}
+import { toast } from 'sonner';
+import type { SearchBookDto } from '@/lib/types/books';
 
 interface HomeClientProps {
-  books: Book[];
+  books: SearchBookDto[];
+  error?: string;
 }
 
-export default function HomeClient({ books }: HomeClientProps) {
+export default function HomeClient({ books, error }: HomeClientProps) {
   const [searchValue, setSearchValue] = useState('');
   const router = useRouter();
   const { user, isLoading } = useUser();
+
+  useEffect(() => {
+    if (error) {
+      // Log para depuración
+      console.log('Toast error:', error);
+      toast.error(`Error al cargar los libros: ${error}`, {
+        position: 'top-right',
+      });
+    }
+  }, [error]);
 
   // Filtrar libros por título (case-insensitive)
   const filteredBooks = books.filter((book) =>
@@ -94,7 +101,7 @@ export default function HomeClient({ books }: HomeClientProps) {
                 className="cursor-pointer transition-transform hover:scale-105"
                 onClick={() => handleBookClick(book.id)}
               >
-                <BookCover title={book.title} cover={book.cover} />
+                <BookCover title={book.title} cover={book.coverURl} />
               </div>
             ))}
           </div>

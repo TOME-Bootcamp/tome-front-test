@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { BookCard } from '@/components/common/BookCard';
-import type { BookDetail } from '@/lib/api/books';
+import type { GetBookDto } from '@/lib/types/books';
 
 interface RelatedBooksProps {
-  books: BookDetail[];
+  books: GetBookDto[];
 }
 
 export function RelatedBooks({ books }: RelatedBooksProps) {
@@ -29,12 +29,11 @@ export function RelatedBooks({ books }: RelatedBooksProps) {
           <BookCard
             key={relatedBook.id}
             book={{
-              cover: relatedBook.cover,
+              cover: relatedBook.coverURl,
               title: relatedBook.title,
-              year: relatedBook.year,
-              pages: relatedBook.pages,
-              rating: relatedBook.rating,
-              tags: relatedBook.tags.slice(0, 3), // Mostrar solo los primeros 3 tags
+              year: relatedBook.releaseDate.slice(0, 4),
+              pages: relatedBook.pages.toString(),
+              tags: relatedBook.tags.slice(0, 3),
               imageWidth: 120,
               imageHeight: 180,
             }}

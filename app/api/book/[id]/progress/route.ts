@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { updateBookProgress } from '@/lib/api/books';
+import { updateBookProgress } from '@/lib/api/books.mock';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

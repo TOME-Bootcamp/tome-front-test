@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { BookCover } from '../home/book-cover';
 import { BookDataChip } from './BookDataChip';
 import { ChipsRow } from './ChipsRow';
+import type { Tag } from '@/lib/types/books';
 
 export interface BookCardData {
   // Datos de la portada
@@ -15,7 +16,7 @@ export interface BookCardData {
   rating?: string;
 
   // Chips adicionales (géneros, etiquetas, etc.)
-  tags: string[];
+  tags: Tag[];
 
   // Tamaño de la imagen (opcional, por defecto usa el del BookCover)
   imageWidth?: number;
